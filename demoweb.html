@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo ระบบเว็บไซต์สำเร็จรูป</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #666;
+            text-align: center;
+            font-size: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .iframe-container {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 100px);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: white;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 100px);
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-refresh {
+            background: linear-gradient(90deg, #4CAF50, #2E7D32);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-refresh:hover {
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-fullscreen {
+            background: linear-gradient(90deg, #FF9800, #F57C00);
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .btn-fullscreen:hover {
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateX(400px);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            max-width: 350px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        /* ปิด scrollbar ทั้งหมด */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .header p {
+                font-size: 14px;
+            }
+            
+            .iframe-container {
+                top: 80px;
+                height: calc(100vh - 80px);
+            }
+            
+            .loading-overlay {
+                top: 80px;
+                height: calc(100vh - 80px);
+            }
+            
+            .control-panel {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 12px 15px;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <h1>Demo ระบบเว็บไซต์สำเร็จรูป</h1>
+        <p>ระบบจัดการเนื้อหา Google Apps Script | แสดงผลเต็มหน้าจอโดยไม่ต้องเลื่อน | การทำงานแบบเรียลไทม์</p>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">กำลังโหลดระบบเว็บไซต์สำเร็จรูป...</div>
+    </div>
+    
+    <!-- Iframe Container -->
+    <div class="iframe-container">
+        <iframe 
+            id="mainIframe"
+            src=""
+            title="Demo ระบบเว็บไซต์สำเร็จรูป"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+    
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>ระบบพร้อมใช้งาน</span>
+        </div>
+        
+        <button class="btn btn-refresh" id="refreshBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+            </svg>
+            รีเฟรชหน้า
+        </button>
+        
+        <button class="btn btn-fullscreen" id="fullscreenBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+            </svg>
+            เต็มหน้าจอ
+        </button>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-title">ระบบพร้อมใช้งาน</div>
+        <div class="notification-message">ระบบเว็บไซต์สำเร็จรูปโหลดเสร็จสมบูรณ์แล้ว คุณสามารถใช้งานได้ทันที</div>
+    </div>
+
+    <script>
+        // ตั้งค่า URL ของ Google Apps Script
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMWMr-tWHA0uvT_CN_TdtWFeSlLEJPJFpAI_JGj1GL11OP0rLsl6gkuEWTNZKToHZtFQ/exec";
+        
+        // องค์ประกอบ DOM
+        const mainIframe = document.getElementById('mainIframe');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const notification = document.getElementById('notification');
+        
+        // ฟังก์ชันแสดง notification
+        function showNotification(title, message) {
+            const titleElement = notification.querySelector('.notification-title');
+            const messageElement = notification.querySelector('.notification-message');
+            
+            titleElement.textContent = title;
+            messageElement.textContent = message;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+        
+        // ฟังก์ชันโหลด iframe
+        function loadIframe() {
+            // แสดง loading overlay
+            loadingOverlay.classList.remove('hidden');
+            
+            // ตั้งค่า iframe source
+            mainIframe.src = APPS_SCRIPT_URL;
+            
+            // ตรวจสอบสถานะการโหลด
+            let loadAttempts = 0;
+            const maxLoadAttempts = 3;
+            
+            const checkIframeLoaded = setInterval(() => {
+                try {
+                    // พยายามเข้าถึง iframe content
+                    if (mainIframe.contentWindow && mainIframe.contentWindow.document) {
+                        if (mainIframe.contentWindow.document.readyState === 'complete') {
+                            // ซ่อน loading overlay เมื่อโหลดเสร็จ
+                            setTimeout(() => {
+                                loadingOverlay.classList.add('hidden');
+                                showNotification("โหลดสำเร็จ", "ระบบเว็บไซต์สำเร็จรูปพร้อมใช้งาน");
+                            }, 500);
+                            
+                            clearInterval(checkIframeLoaded);
+                        }
+                    }
+                    
+                    loadAttempts++;
+                    if (loadAttempts >= maxLoadAttempts * 10) { // 10 attempts per second for 3 seconds
+                        clearInterval(checkIframeLoaded);
+                        loadingOverlay.classList.add('hidden');
+                        showNotification("คำเตือน", "การโหลดใช้เวลานานกว่าปกติ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+                    }
+                } catch (e) {
+                    // ข้อผิดพลาด CORS - ไม่สามารถตรวจสอบได้ แต่ถือว่าโหลดแล้ว
+                    setTimeout(() => {
+                        loadingOverlay.classList.add('hidden');
+                        showNotification("โหลดสำเร็จ", "ระบบเว็บไซต์สำเร็จรูปพร้อมใช้งาน");
+                    }, 1000);
+                    
+                    clearInterval(checkIframeLoaded);
+                }
+            }, 100);
+        }
+        
+        // ฟังก์ชันรีเฟรช iframe
+        function refreshIframe() {
+            showNotification("กำลังรีเฟรช", "กำลังโหลดระบบเว็บไซต์สำเร็จรูปใหม่...");
+            
+            // รีเซ็ต iframe source เพื่อบังคับโหลดใหม่
+            mainIframe.src = '';
+            
+            // รีโหลด iframe หลังจากหน่วงเวลาเล็กน้อย
+            setTimeout(() => {
+                loadIframe();
+            }, 300);
+        }
+        
+        // ฟังก์ชันเต็มหน้าจอ
+        function toggleFullscreen() {
+            const elem = document.documentElement;
+            
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+                
+                showNotification("เต็มหน้าจอ", "คุณอยู่ในโหมดเต็มหน้าจอแล้ว");
+                fullscreenBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3v3a2 2 0 01-2 2H3m18 0h-3a2 2 0 01-2-2V3m0 18v-3a2 2 0 012-2h3M3 16h3a2 2 0 012 2v3"/>
+                    </svg>
+                    ออกจากเต็มหน้าจอ
+                `;
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                
+                showNotification("ปกติ", "คุณออกจากโหมดเต็มหน้าจอแล้ว");
+                fullscreenBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+                    </svg>
+                    เต็มหน้าจอ
+                `;
+            }
+        }
+        
+        // ฟังก์ชันตรวจสอบการเปลี่ยนแปลงขนาดหน้าจอ
+        function handleResize() {
+            // ปรับ iframe container ให้พอดีกับหน้าจอ
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const iframeContainer = document.querySelector('.iframe-container');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            iframeContainer.style.top = `${headerHeight}px`;
+            iframeContainer.style.height = `calc(100vh - ${headerHeight}px)`;
+            
+            loadingOverlay.style.top = `${headerHeight}px`;
+            loadingOverlay.style.height = `calc(100vh - ${headerHeight}px)`;
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // โหลด iframe เมื่อหน้าเว็บโหลดเสร็จ
+            loadIframe();
+            
+            // ตั้งค่าการปรับขนาด
+            handleResize();
+            window.addEventListener('resize', handleResize);
+        });
+        
+        refreshBtn.addEventListener('click', refreshIframe);
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        
+        // ป้องกันการคลิกขวา
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showNotification("การป้องกัน", "การคลิกขวาถูกปิดใช้งานในหน้านี้");
+            return false;
+        });
+        
+        // ป้องกันการกด F12 และการเปิด DevTools
+        document.addEventListener('keydown', (e) => {
+            // ป้องกัน F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+                showNotification("การป้องกัน", "การเปิด DevTools ถูกจำกัดในหน้านี้");
+                return false;
+            }
+            
+            // ป้องกัน Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+            if (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) {
+                e.preventDefault();
+                showNotification("การป้องกัน", "การตรวจสอบโค้ดถูกจำกัดในหน้านี้");
+                return false;
+            }
+            
+            if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+                showNotification("การป้องกัน", "การดูซอร์สโค้ดถูกจำกัดในหน้านี้");
+                return false;
+            }
+        });
+        
+        // ตรวจสอบสถานะ fullscreen เมื่อมีการเปลี่ยนแปลง
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullscreenBtn.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+                    </svg>
+                    เต็มหน้าจอ
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
