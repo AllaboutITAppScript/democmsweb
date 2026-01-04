@@ -129,6 +129,14 @@
             margin-top: 10px;
         }
         
+        .btn-newtab {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+        
+        .btn-logout {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        
         .message {
             padding: 15px;
             border-radius: 10px;
@@ -186,14 +194,6 @@
             flex-wrap: wrap;
         }
         
-        .btn-newtab {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-        }
-        
-        .btn-logout {
-            background: linear-gradient(90deg, #e74c3c, #c0392b);
-        }
-        
         .instructions {
             background-color: #f0f7ff;
             border-left: 5px solid #4a6491;
@@ -225,6 +225,76 @@
             margin-top: 30px;
         }
         
+        .login-credentials {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .login-credentials h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, #4a6491, #2c3e50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .user-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
         @media (max-width: 768px) {
             .content {
                 padding: 20px;
@@ -238,6 +308,10 @@
                 font-size: 2rem;
             }
             
+            .header p {
+                font-size: 0.9rem;
+            }
+            
             .button-group {
                 flex-direction: column;
             }
@@ -245,27 +319,58 @@
             .iframe-container iframe {
                 height: 400px;
             }
+            
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
         
-        .login-credentials {
-            margin-top: 25px;
-            padding: 15px;
-            background-color: #fff8e1;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
             border-radius: 10px;
-            border-left: 4px solid #ffc107;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateX(400px);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            max-width: 350px;
+            border-left: 5px solid #4a6491;
         }
         
-        .login-credentials h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .notification.success {
+            border-left-color: #27ae60;
+        }
+        
+        .notification.error {
+            border-left-color: #e74c3c;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>ระบบล็อกอินสำหรับเนื้อหาที่ปกป้อง</h1>
-            <p>กรุณาล็อกอินเพื่อจัดการเว็บไซต์</p>
+            <h1>ระบบจัดการเว็บไซต์สำเร็จรูป CMS</h1>
+            <p>ครบเครื่องเรื่องไอที - จัดการเนื้อหาเว็บไซต์ของคุณได้อย่างง่ายดาย</p>
         </div>
         
         <div class="content">
@@ -302,14 +407,28 @@
             
             <!-- ส่วนเนื้อหาหลังล็อกอิน -->
             <div class="protected-section" id="protectedSection">
-                <h2 style="color: #2c3e50; margin-bottom: 20px;">จัดการเนื้อหาเว็บไซต์ของท่าน</h2>
-                <p style="color: #555; margin-bottom: 25px;">คุณได้เข้าสู่ระบบเรียบร้อยแล้ว สามารถดูข้อมูลด้านล่างนี้ได้</p>
+                <div class="dashboard-header">
+                    <div>
+                        <h2 style="color: #2c3e50; margin-bottom: 5px;">จัดการเนื้อหาเว็บไซต์ของท่าน</h2>
+                        <p style="color: #555; margin-bottom: 0;">คุณได้เข้าสู่ระบบเรียบร้อยแล้ว</p>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">A</div>
+                        <div class="user-name">ผู้ดูแลระบบ</div>
+                    </div>
+                </div>
+                
+                <div class="system-status">
+                    <div class="status-indicator"></div>
+                    <span>ระบบพร้อมใช้งาน</span>
+                </div>
                 
                 <div class="iframe-container">
                     <div class="iframe-overlay" id="iframeOverlay">
                         <div>เนื้อหานี้ได้รับการปกป้อง กรุณาล็อกอินเพื่อดูข้อมูล</div>
                     </div>
-                    <iframe id="protectedIframe" src="" title="Protected Google Sheets"></iframe>
+                    <iframe id="protectedIframe" src="" title="ระบบจัดการเว็บไซต์สำเร็จรูป"></iframe>
                 </div>
                 
                 <div class="button-group">
@@ -323,17 +442,25 @@
                     <h3>คำแนะนำการใช้งาน:</h3>
                     <ul>
                         <li>ข้อมูลใน iframe ด้านบนจะแสดงหลังจากล็อกอินเท่านั้น</li>
-                        <li>ปุ่ม "เปิดในแท็บใหม่" จะเปิดลิงก์ Google Sheets ในแท็บใหม่</li>
+                        <li>ปุ่ม "ดูหน้าตัวอย่างเว็บไซต์" จะเปิดตัวอย่างเว็บไซต์ในแท็บใหม่</li>
                         <li>กดปุ่ม "ออกจากระบบ" เพื่อกลับไปยังหน้าล็อกอิน</li>
                         <li>ระบบนี้ป้องกันการดูโค้ดด้วยการซ่อนลิงก์จริงจนกว่าจะล็อกอินสำเร็จ</li>
+                        <li>ข้อมูลทั้งหมดจะถูกล้างเมื่อปิดเบราว์เซอร์ (sessionStorage)</li>
                     </ul>
                 </div>
             </div>
         </div>
         
         <div class="footer">
-            <p>ระบบจัดการระบบเว็บไซต์สำเร็จรูป &copy; 2025 | ครบเครื่องเรื่องไอที</p>
+            <p>ระบบจัดการระบบเว็บไซต์สำเร็จรูป CMS &copy; 2025 | ครบเครื่องเรื่องไอที</p>
+            <p style="font-size: 0.8rem; margin-top: 5px;">ใช้งานฟอนต์ Kanit จาก Google Fonts</p>
         </div>
+    </div>
+
+    <!-- Notification Element -->
+    <div class="notification" id="notification">
+        <div class="notification-title" id="notificationTitle">แจ้งเตือน</div>
+        <div class="notification-message" id="notificationMessage">ข้อความแจ้งเตือน</div>
     </div>
 
     <script>
@@ -350,9 +477,36 @@
         const protectedIframe = document.getElementById('protectedIframe');
         const logoutBtn = document.getElementById('logoutBtn');
         const newTabBtn = document.getElementById('newTabBtn');
+        const notification = document.getElementById('notification');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const notificationMessage = document.getElementById('notificationMessage');
         
         // ลิงก์ที่ต้องการปกป้อง
         const protectedLink = "https://docs.google.com/spreadsheets/d/19zx_MmojlWWXSHN31CDZMA5bs_0JCkhUvUSgN9iTr8c/edit?gid=1876705905#gid=1876705905";
+        
+        // ลิงก์ตัวอย่างเว็บไซต์
+        const demoWebLink = "https://allaboutitappscript.github.io/democmsweb/demoweb.html";
+        
+        // ฟังก์ชันแสดงการแจ้งเตือน
+        function showNotification(type, title, message) {
+            notificationTitle.textContent = title;
+            notificationMessage.textContent = message;
+            
+            // ตั้งค่าสีตามประเภท
+            notification.className = "notification";
+            if (type === "success") {
+                notification.classList.add("success");
+            } else if (type === "error") {
+                notification.classList.add("error");
+            }
+            
+            notification.classList.add("show");
+            
+            // ซ่อนการแจ้งเตือนหลังจาก 4 วินาที
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 4000);
+        }
         
         // ตรวจสอบสถานะล็อกอินจาก sessionStorage
         document.addEventListener('DOMContentLoaded', function() {
@@ -374,16 +528,22 @@
             if (username === validUsername && password === validPassword) {
                 // บันทึกสถานะล็อกอิน
                 sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('username', username);
                 
                 // แสดงเนื้อหาที่ปกป้อง
                 showProtectedContent();
+                
+                // แสดงการแจ้งเตือน
+                showNotification("success", "เข้าสู่ระบบสำเร็จ", "ยินดีต้อนรับเข้าสู่ระบบจัดการเว็บไซต์");
             } else {
                 // แสดงข้อความผิดพลาด
                 errorMessage.style.display = 'block';
                 
                 // ล้างฟอร์ม
-                document.getElementById('username').value = '';
                 document.getElementById('password').value = '';
+                
+                // แสดงการแจ้งเตือน
+                showNotification("error", "เข้าสู่ระบบล้มเหลว", "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
                 
                 // ซ่อนข้อความผิดพลาดหลังจาก 3 วินาที
                 setTimeout(function() {
@@ -404,14 +564,28 @@
             iframeOverlay.style.display = 'none';
             protectedIframe.src = protectedLink;
             
-            // ตั้งค่าปุ่มเปิดแท็บใหม่
-            newTabBtn.href = protectedLink;
+            // ตั้งค่าปุ่มเปิดแท็บใหม่ให้ชี้ไปที่ตัวอย่างเว็บไซต์
+            newTabBtn.href = demoWebLink;
+            
+            // อัพเดทชื่อผู้ใช้ใน dashboard
+            const username = sessionStorage.getItem('username') || 'ผู้ใช้';
+            const userAvatar = document.querySelector('.user-avatar');
+            const userName = document.querySelector('.user-name');
+            
+            if (username && userAvatar) {
+                userAvatar.textContent = username.charAt(0).toUpperCase();
+            }
+            
+            if (username && userName) {
+                userName.textContent = username === 'admin' ? 'ผู้ดูแลระบบ' : username;
+            }
         }
         
         // จัดการการออกจากระบบ
         logoutBtn.addEventListener('click', function() {
             // ลบสถานะล็อกอิน
             sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
             
             // ซ่อนเนื้อหาที่ปกป้อง
             protectedSection.style.display = 'none';
@@ -426,34 +600,56 @@
             // ล้างฟอร์มล็อกอิน
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
+            
+            // แสดงการแจ้งเตือน
+            showNotification("success", "ออกจากระบบสำเร็จ", "คุณได้ออกจากระบบเรียบร้อยแล้ว");
         });
         
         // ป้องกันการคลิกขวาเพื่อดูซอร์สโค้ด
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
+            showNotification("info", "การป้องกัน", "การคลิกขวาถูกปิดใช้งานในหน้านี้");
             return false;
         });
         
-        // ป้องกันการดูซอร์สโค้ดด้วยปุ่ม F12
+        // ป้องกันการดูซอร์สโค้ดด้วยปุ่มลัด
         document.addEventListener('keydown', function(e) {
             // ปุ่ม F12
-            if (e.keyCode === 123) {
+            if (e.key === 'F12' || e.keyCode === 123) {
                 e.preventDefault();
+                showNotification("info", "การป้องกัน", "การเปิด Developer Tools ถูกจำกัดในหน้านี้");
                 return false;
             }
             
-            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
-            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
                 e.preventDefault();
+                showNotification("info", "การป้องกัน", "การตรวจสอบโค้ดถูกจำกัดในหน้านี้");
                 return false;
             }
             
-            // Ctrl+U
-            if (e.ctrlKey && e.keyCode === 85) {
+            // Ctrl+U (View Source)
+            if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
                 e.preventDefault();
+                showNotification("info", "การป้องกัน", "การดูซอร์สโค้ดถูกจำกัดในหน้านี้");
                 return false;
             }
         });
+        
+        // ตรวจสอบสถานะการล็อกอินเป็นระยะ (ป้องกันการเข้าถึงโดยตรง)
+        setInterval(function() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            
+            if (protectedSection.style.display !== 'none' && isLoggedIn !== 'true') {
+                // หากแสดงหน้า protected แต่ไม่ได้ล็อกอิน ให้กลับไปหน้าล็อกอิน
+                protectedSection.style.display = 'none';
+                loginSection.style.display = 'block';
+                protectedIframe.src = '';
+                iframeOverlay.style.display = 'flex';
+                
+                showNotification("error", "เซสชั่นหมดอายุ", "กรุณาเข้าสู่ระบบอีกครั้ง");
+            }
+        }, 60000); // ตรวจสอบทุก 1 นาที
     </script>
 </body>
 </html>
