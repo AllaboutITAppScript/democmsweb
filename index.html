@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบล็อกอิน | จัดการเว็บสำเร็จรูปCMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-weight: 300;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+        
+        .login-section, .protected-section {
+            width: 100%;
+        }
+        
+        .protected-section {
+            display: none;
+        }
+        
+        .login-form {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4a6491;
+            box-shadow: 0 0 0 3px rgba(74, 100, 145, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #4a6491, #2c3e50);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-login {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+        
+        .error {
+            background-color: #ffeaea;
+            color: #d9534f;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success {
+            background-color: #eaffea;
+            color: #5cb85c;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .iframe-container {
+            margin-top: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .iframe-container iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            display: block;
+        }
+        
+        .iframe-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-newtab {
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        }
+        
+        .btn-logout {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+        
+        .instructions {
+            background-color: #f0f7ff;
+            border-left: 5px solid #4a6491;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .login-form {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .iframe-container iframe {
+                height: 400px;
+            }
+        }
+        
+        .login-credentials {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .login-credentials h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ระบบล็อกอินสำหรับเนื้อหาที่ปกป้อง</h1>
+            <p>กรุณาล็อกอินเพื่อดูข้อมูลใน Google Sheets</p>
+        </div>
+        
+        <div class="content">
+            <!-- ส่วนฟอร์มล็อกอิน -->
+            <div class="login-section" id="loginSection">
+                <div class="login-form">
+                    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 25px;">เข้าสู่ระบบ</h2>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">ชื่อผู้ใช้</label>
+                            <input type="text" id="username" class="form-control" placeholder="กรอกชื่อผู้ใช้" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">รหัสผ่าน</label>
+                            <input type="password" id="password" class="form-control" placeholder="กรอกรหัสผ่าน" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-login">เข้าสู่ระบบ</button>
+                    </form>
+                    
+                    <div class="message error" id="errorMessage">
+                        ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง! กรุณาลองอีกครั้ง
+                    </div>
+                    
+                    <div class="login-credentials">
+                        <h4>ข้อมูลสำหรับทดสอบระบบ:</h4>
+                        <p><strong>ชื่อผู้ใช้:</strong> admin</p>
+                        <p><strong>รหัสผ่าน:</strong> password123</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ส่วนเนื้อหาหลังล็อกอิน -->
+            <div class="protected-section" id="protectedSection">
+                <h2 style="color: #2c3e50; margin-bottom: 20px;">ข้อมูล Google Sheets ที่ปกป้อง</h2>
+                <p style="color: #555; margin-bottom: 25px;">คุณได้เข้าสู่ระบบเรียบร้อยแล้ว สามารถดูข้อมูลด้านล่างนี้ได้</p>
+                
+                <div class="iframe-container">
+                    <div class="iframe-overlay" id="iframeOverlay">
+                        <div>เนื้อหานี้ได้รับการปกป้อง กรุณาล็อกอินเพื่อดูข้อมูล</div>
+                    </div>
+                    <iframe id="protectedIframe" src="" title="Protected Google Sheets"></iframe>
+                </div>
+                
+                <div class="button-group">
+                    <a href="https://docs.google.com/spreadsheets/d/19zx_MmojlWWXSHN31CDZMA5bs_0JCkhUvUSgN9iTr8c/edit?gid=1876705905#gid=1876705905" target="_blank" class="btn btn-newtab" id="newTabBtn">
+                        เปิดในแท็บใหม่
+                    </a>
+                    <button class="btn btn-logout" id="logoutBtn">ออกจากระบบ</button>
+                </div>
+                
+                <div class="instructions">
+                    <h3>คำแนะนำการใช้งาน:</h3>
+                    <ul>
+                        <li>ข้อมูลใน iframe ด้านบนจะแสดงหลังจากล็อกอินเท่านั้น</li>
+                        <li>ปุ่ม "เปิดในแท็บใหม่" จะเปิดลิงก์ Google Sheets ในแท็บใหม่</li>
+                        <li>กดปุ่ม "ออกจากระบบ" เพื่อกลับไปยังหน้าล็อกอิน</li>
+                        <li>ระบบนี้ป้องกันการดูโค้ดด้วยการซ่อนลิงก์จริงจนกว่าจะล็อกอินสำเร็จ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>ระบบล็อกอินสำหรับปกป้องเนื้อหา &copy; 2023 | ออกแบบด้วย HTML, CSS และ JavaScript</p>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลล็อกอิน (ในระบบจริงควรใช้การตรวจสอบจากเซิร์ฟเวอร์)
+        const validUsername = "admin";
+        const validPassword = "password123";
+        
+        // องค์ประกอบ DOM
+        const loginSection = document.getElementById('loginSection');
+        const protectedSection = document.getElementById('protectedSection');
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const iframeOverlay = document.getElementById('iframeOverlay');
+        const protectedIframe = document.getElementById('protectedIframe');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const newTabBtn = document.getElementById('newTabBtn');
+        
+        // ลิงก์ที่ต้องการปกป้อง
+        const protectedLink = "https://docs.google.com/spreadsheets/d/19zx_MmojlWWXSHN31CDZMA5bs_0JCkhUvUSgN9iTr8c/edit?gid=1876705905#gid=1876705905";
+        
+        // ตรวจสอบสถานะล็อกอินจาก sessionStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            
+            if (isLoggedIn === 'true') {
+                showProtectedContent();
+            }
+        });
+        
+        // จัดการการส่งฟอร์มล็อกอิน
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // ตรวจสอบข้อมูลล็อกอิน
+            if (username === validUsername && password === validPassword) {
+                // บันทึกสถานะล็อกอิน
+                sessionStorage.setItem('isLoggedIn', 'true');
+                
+                // แสดงเนื้อหาที่ปกป้อง
+                showProtectedContent();
+            } else {
+                // แสดงข้อความผิดพลาด
+                errorMessage.style.display = 'block';
+                
+                // ล้างฟอร์ม
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                // ซ่อนข้อความผิดพลาดหลังจาก 3 วินาที
+                setTimeout(function() {
+                    errorMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+        
+        // ฟังก์ชันแสดงเนื้อหาที่ปกป้อง
+        function showProtectedContent() {
+            // ซ่อนส่วนล็อกอิน
+            loginSection.style.display = 'none';
+            
+            // แสดงส่วนเนื้อหาที่ปกป้อง
+            protectedSection.style.display = 'block';
+            
+            // ซ่อน overlay และโหลด iframe
+            iframeOverlay.style.display = 'none';
+            protectedIframe.src = protectedLink;
+            
+            // ตั้งค่าปุ่มเปิดแท็บใหม่
+            newTabBtn.href = protectedLink;
+        }
+        
+        // จัดการการออกจากระบบ
+        logoutBtn.addEventListener('click', function() {
+            // ลบสถานะล็อกอิน
+            sessionStorage.removeItem('isLoggedIn');
+            
+            // ซ่อนเนื้อหาที่ปกป้อง
+            protectedSection.style.display = 'none';
+            
+            // แสดงฟอร์มล็อกอิน
+            loginSection.style.display = 'block';
+            
+            // รีเซ็ต iframe
+            protectedIframe.src = '';
+            iframeOverlay.style.display = 'flex';
+            
+            // ล้างฟอร์มล็อกอิน
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        });
+        
+        // ป้องกันการคลิกขวาเพื่อดูซอร์สโค้ด
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // ป้องกันการดูซอร์สโค้ดด้วยปุ่ม F12
+        document.addEventListener('keydown', function(e) {
+            // ปุ่ม F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+U
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
